@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>greetServlet</servlet-name>
+    <servlet-class>grg.example.contact.server.GreetingServiceImpl</servlet-class>
+  </servlet>
+  
+  
+   <servlet>
+  	<servlet-name>RestletServlet</servlet-name>
+  	<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+  	<init-param>
+  		<param-name>org.restlet.application</param-name>
+  		<param-value>grg.example.contact.server.ContactServerApplication</param-value>
+  	</init-param>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>greetServlet</servlet-name>
+    <url-pattern>/grgcontactdemo/greet</url-pattern>
+  </servlet-mapping>
+  
+    <servlet-mapping>
+  	<servlet-name>RestletServlet</servlet-name>
+  	<url-pattern>/restlet/*</url-pattern>
+</servlet-mapping>
+  
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>GRGContactDemo.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>
