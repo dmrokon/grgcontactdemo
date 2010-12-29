@@ -17,7 +17,7 @@
   	<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
   	<init-param>
   		<param-name>org.restlet.application</param-name>
-  		<param-value>grg.example.contact.server.ContactServerApplication</param-value>
+  		<param-value>grg.example.contact.server.GRGServerApplication</param-value>
   	</init-param>
   </servlet>
   
