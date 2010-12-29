@@ -41,7 +41,7 @@ public class GRGContactDemo implements EntryPoint {
 			.create(GreetingService.class);
 	
 	private final ContactResourceProxy contactresource = GWT.create(ContactResourceProxy.class);
-	private final DemoResourceProxy demoresource = GWT.create(DemoResourceProxy.class);
+	private final ContactsResourceProxy demoresource = GWT.create(ContactsResourceProxy.class);
 
 	/**
 	 * This is the entry point method.
@@ -60,7 +60,7 @@ public class GRGContactDemo implements EntryPoint {
 		// Use RootPanel.get() to get the entire body element
 		RootPanel.get("nameFieldContainer").add(nameField);
 		RootPanel.get("sendButtonContainer").add(sendButton);
-		RootPanel.get("sendButtonContainer").add(demoButton);
+		RootPanel.get("demoButtonContainer").add(demoButton);
 		RootPanel.get("errorLabelContainer").add(errorLabel);
 
 		// Focus the cursor on the name field when the app loads
