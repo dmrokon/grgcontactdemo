@@ -5,12 +5,12 @@ import java.io.IOException;
 import grg.example.contact.shared.Contact;
 import grg.example.contact.shared.ContactsResource;
 
-import org.restlet.data.Form;
+import org.restlet.client.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.ext.xml.DomRepresentation;
-import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
+import org.restlet.client.representation.Representation;
+import org.restlet.client.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.w3c.dom.Document;
@@ -22,8 +22,8 @@ public class ContactsServerResource extends BaseResource implements ContactsReso
 	 * Handle Post request : create new contact
 	 */
 	@Post
-	public Representation insertContact(Representation contact){
-		Representation result = null;
+	public DomRepresentation insertContact(Representation contact){
+		DomRepresentation result = null;
 		// Lay du lieu
 		Form form = new Form(contact);
 		String name = form.getFirstValue("name");
@@ -32,7 +32,7 @@ public class ContactsServerResource extends BaseResource implements ContactsReso
 		// Kiem tra va luu 
 		if(!getContacts().containsKey(name) && getContacts().putIfAbsent(name, new Contact(name,desc)) == null){
 			setStatus(Status.SUCCESS_CREATED);
-			Representation rep = new StringRepresentation("Contact Created",MediaType.TEXT_PLAIN);
+			DomRepresentation rep = new StringRepresentation("Contact Created",MediaType.TEXT_PLAIN);
 			rep.setLocationRef(getRequest().getResourceRef().getIdentifier()+"/"+name);
 			result = rep;
 		}
@@ -44,7 +44,7 @@ public class ContactsServerResource extends BaseResource implements ContactsReso
 		return result;
 	}
 
-	private Representation generateErrorRepresentation(String errorMessage,   
+	private DomRepresentation generateErrorRepresentation(String errorMessage,   
             String errorCode) {
 		DomRepresentation result = null;
 		try{
@@ -77,7 +77,7 @@ public class ContactsServerResource extends BaseResource implements ContactsReso
 	 * 
 	 */
 	@Get("Xml")
-	public Representation toXML() throws IOException{
+	public DomRepresentation toXML() throws IOException{
 		DomRepresentation result = new DomRepresentation(MediaType.TEXT_XML);
 		
 		try{
