@@ -13,6 +13,7 @@
 <!-- Inherits the Restlet core module                           -->
   <inherits name='org.restlet.Restlet' />
 
+
   <!-- Specify the app entry point class.                         -->
   <entry-point class='grg.example.contact.client.GRGContactDemo'/>
 

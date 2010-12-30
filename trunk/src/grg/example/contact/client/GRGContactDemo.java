@@ -3,8 +3,11 @@ package grg.example.contact.client;
 import org.restlet.client.data.MediaType;
 import org.restlet.client.data.Preference;
 import org.restlet.client.resource.Result;
+import org.restlet.data.Form;
+import org.restlet.representation.Representation; 
 
 
+import grg.example.contact.shared.Contact;
 import grg.example.contact.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -41,26 +44,28 @@ public class GRGContactDemo implements EntryPoint {
 			.create(GreetingService.class);
 	
 	private final ContactResourceProxy contactresource = GWT.create(ContactResourceProxy.class);
-	private final ContactsResourceProxy demoresource = GWT.create(ContactsResourceProxy.class);
+	private final ContactsResourceProxy contactsresource = GWT.create(ContactsResourceProxy.class);
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Send");
-		final Button demoButton = new Button("Demo");
+		final Button createButton = new Button("Create");
+		final Button updateButton = new Button("Update");
 		final TextBox nameField = new TextBox();
-		nameField.setText("GWT User");
+		final TextBox descField = new TextBox();
 		final Label errorLabel = new Label();
 
 		// We can add style names to widgets
-		sendButton.addStyleName("sendButton");
+		createButton.addStyleName("newButton");
+		updateButton.addStyleName("newButton");
 
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
 		RootPanel.get("nameFieldContainer").add(nameField);
-		RootPanel.get("sendButtonContainer").add(sendButton);
-		RootPanel.get("demoButtonContainer").add(demoButton);
+		RootPanel.get("descFieldContainer").add(descField);
+		RootPanel.get("createButtonContainer").add(createButton);
+		RootPanel.get("updateButtonContainer").add(updateButton);
 		RootPanel.get("errorLabelContainer").add(errorLabel);
 
 		// Focus the cursor on the name field when the app loads
@@ -90,21 +95,21 @@ public class GRGContactDemo implements EntryPoint {
 		closeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				dialogBox.hide();
-				sendButton.setEnabled(true);
-				sendButton.setFocus(true);
+				createButton.setEnabled(true);
+				createButton.setFocus(true);
 			}
 		});
 		
-		demoButton.addClickHandler(new ClickHandler() {
+		createButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				demoresource.getClientResource().setReference("/restlet/demo-services/abc");
-				demoresource.getClientResource().getClientInfo()
+				contactsresource.getClientResource().setReference("/restlet/contacts");
+				contactsresource.getClientResource().getClientInfo()
                 .getAcceptedMediaTypes().add(
                         new Preference<MediaType>(
-                                MediaType.APPLICATION_JAVA_OBJECT_GWT));
+                                MediaType.APPLICATION_ALL_XML));
 				
 				/*demoresource.Retrieve(new Result<String>() {
                     public void onFailure(Throwable caught) {
@@ -119,11 +124,15 @@ public class GRGContactDemo implements EntryPoint {
                         nameField.setText(str);
                     }
                 });*/
-								
 				
-				demoresource.GetName(new Result<String>(){
+				String name = nameField.getText();
+				String desc = descField.getText();
+				
+				Contact contact = new Contact(name,desc);
+				contactsresource.insertContact(getRepresentation(contact), 
+						new Result<Representation>(){
 
-					
+					@Override
 					public void onFailure(Throwable caught) {
 						dialogBox.setText("Get contact");
                         textToServerLabel.setText("Error: "
@@ -132,16 +141,21 @@ public class GRGContactDemo implements EntryPoint {
                         closeButton.setFocus(true);
 						
 					}
-					
-					public void onSuccess(String str) {
-						 nameField.setText(str);
-						
+
+					@Override
+					public void onSuccess(Representation result) {
+						dialogBox.setText("Inserted!");
+						 dialogBox.center();
+						 closeButton.setFocus(true);
 					}
 					
-				});
+				});				
+				
+				
 			}
 		});
 
+		
 		// Create a handler for the sendButton and nameField
 		class MyHandler implements ClickHandler, KeyUpHandler {
 			/**
@@ -150,25 +164,36 @@ public class GRGContactDemo implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				//sendNameToServer();
 				
-				contactresource.getClientResource().setReference("/restlet/contact-services");
+				contactresource.getClientResource().setReference("/restlet/contacts/"+nameField.getText());
 				contactresource.getClientResource().getClientInfo()
                 .getAcceptedMediaTypes().add(
                         new Preference<MediaType>(
-                                MediaType.APPLICATION_JAVA_OBJECT_GWT));
+                                MediaType.APPLICATION_ALL_XML));
 				
-				contactresource.Retrieve(new Result<String>() {
-                    public void onFailure(Throwable caught) {
-                        dialogBox.setText("Get contact");
+				String name = nameField.getText();
+				String desc = descField.getText();
+				Contact contact = new Contact(name,desc);
+				contactresource.storeContact(getRepresentation(contact), new Result<Void>(){
+
+					@Override
+					public void onFailure(Throwable caught) {
+						dialogBox.setText("Get contact");
                         textToServerLabel.setText("Error: "
                                 + caught.getMessage());
                         dialogBox.center();
                         closeButton.setFocus(true);
-                    }
+						
+					}
 
-                    public void onSuccess(String str) {
-                        nameField.setText(str);
-                    }
-                });
+					@Override
+					public void onSuccess(Void result) {
+						dialogBox.setText("Updated!");
+						 dialogBox.center();
+						 closeButton.setFocus(true);
+						
+					}
+					
+				});
 			}
 
 			/**
@@ -193,7 +218,7 @@ public class GRGContactDemo implements EntryPoint {
 				}
 
 				// Then, we send the input to the server.
-				sendButton.setEnabled(false);
+				createButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
 				greetingService.greetServer(textToServer,
@@ -223,7 +248,24 @@ public class GRGContactDemo implements EntryPoint {
 
 		// Add a handler to send the name to the server
 		MyHandler handler = new MyHandler();
-		sendButton.addClickHandler(handler);
+		updateButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
 	}
+	
+
+	/**  
+     * Returns the Representation of an item.  
+     *   
+     * @param item  
+     *            the item.  
+     *   
+     * @return The Representation of the item.  
+     */  
+    public static Representation getRepresentation(Contact item) {   
+        // Gathering informations into a Web form.   
+        Form form = new Form();   
+        form.add("name", item.getName());   
+        form.add("description", item.getDescription());   
+        return form.getWebRepresentation();   
+    }   
 }
