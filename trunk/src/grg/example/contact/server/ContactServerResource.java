@@ -2,12 +2,12 @@ package grg.example.contact.server;
 
 import java.io.IOException;
 
-import org.restlet.data.Form;
+import org.restlet.client.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.ext.xml.DomRepresentation;
 
-import org.restlet.representation.Representation;
+import org.restlet.client.representation.Representation;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Put;
@@ -64,8 +64,8 @@ public class ContactServerResource extends BaseResource implements ContactResour
 	}
 		
 	@Get("Xml")
-	public Representation toXML() throws IOException{
-		DomRepresentation result = new DomRepresentation(MediaType.TEXT_XML);
+	public DomRepresentation toXML() throws IOException{
+		DomRepresentation result = new DomRepresentation(MediaType.TEXT_PLAIN);
 		try{
 			Document d = result.getDocument();
 			Element eltContact = d.createElement("contact");

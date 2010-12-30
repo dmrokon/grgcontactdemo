@@ -2,7 +2,8 @@ package grg.example.contact.shared;
 
 import java.io.IOException;
 
-import org.restlet.representation.Representation;
+import org.restlet.client.representation.Representation;
+import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 
@@ -11,8 +12,8 @@ import org.restlet.resource.Post;
 public interface ContactsResource {
 
 	@Post
-	public Representation insertContact(Representation contact);
+	public DomRepresentation insertContact(Representation contact);
 	
 	@Get("Xml")
-	public Representation toXML() throws IOException;
+	public DomRepresentation toXML() throws IOException;
 }
