@@ -1,0 +1,1 @@
+Manager Contact list Gwt on client, Gae on Server and Restlet is the webservice
